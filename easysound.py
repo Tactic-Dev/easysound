@@ -19,8 +19,38 @@ try:
 except (ValueError, ImportError):
     XApp = None
 
-VERSION = "1.0.0"
+VERSION = "1.1.0"
 APP_ID = "dev.tacticdev.easysound"
+
+# --- shared by the TACTICDEV Easy* tray apps -------------------------------------------------
+# Only one tray panel open at a time: opening one tells the others (over the session bus) to close.
+TRAY_IFACE, TRAY_PATH = "dev.tacticdev.Tray", "/dev/tacticdev/tray"
+
+def tray_announce():
+    try:
+        Gio.bus_get_sync(Gio.BusType.SESSION, None).emit_signal(
+            None, TRAY_PATH, TRAY_IFACE, "Opened", GLib.Variant("(s)", (APP_ID,)))
+    except GLib.Error:
+        pass
+
+def tray_listen(hide):
+    Gio.bus_get_sync(Gio.BusType.SESSION, None).signal_subscribe(
+        None, TRAY_IFACE, "Opened", TRAY_PATH, None, Gio.DBusSignalFlags.NONE,
+        lambda c, s, p, i, n, params: params.unpack()[0] != APP_ID and hide())
+
+def add_restart_action(app):
+    """Self-restart that stays inside the desktop session (system permissions depend on it).
+    Trigger: gdbus call --session -d <APP_ID> -o /<APP_ID with dots as slashes>
+             -m org.freedesktop.Application.ActivateAction restart [] {}"""
+    act = Gio.SimpleAction.new("restart", None)
+    def restart(*_):
+        script = (f"while kill -0 {os.getpid()} 2>/dev/null; do sleep 0.2; done; "
+                  f"exec {sys.executable} {os.path.abspath(__file__)} --hidden")
+        subprocess.Popen(["sh", "-c", script])
+        app.quit()
+    act.connect("activate", restart)
+    app.add_action(act)
+# ---------------------------------------------------------------------------------------------
 AUTOSTART = os.path.join(GLib.get_user_config_dir(), "autostart", "easysound.desktop")
 STEP = 5          # % per scroll notch / key
 ART_CACHE = os.path.join(GLib.get_user_cache_dir(), "easysound", "art")
@@ -356,6 +386,8 @@ class App(Gtk.Application):
         self.media = Media(lambda: self.refresh() if hasattr(self, "scale") else None)
         self.build()
         self.setup_tray()
+        tray_listen(lambda: self.win.get_visible() and self.win.hide())
+        add_restart_action(self)
         self.refresh()
 
     def do_command_line(self, cl):
@@ -547,6 +579,7 @@ class App(Gtk.Application):
     def toggle(self):
         if self.win.get_visible():
             self.win.hide(); return
+        tray_announce()
         self.audio.reload(); self.refresh()
         self.win.show_all()
         self.place_near_pointer()

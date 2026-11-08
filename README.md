@@ -1,4 +1,4 @@
-# EasySound 1.0.0
+# EasySound 1.1.0
 
 A simple, reliable sound tray icon for Linux desktops (GTK3, PipeWire or PulseAudio via `pactl`).
 It replaces Cinnamon's sound applet, whose libcvc backend loses track of Bluetooth speakers and then
