@@ -65,23 +65,23 @@ MAX_VOL = 100     # never boost past 100 % (that's what made the laptop speakers
 CSS = b"""
 window.easysound { background-color: transparent; }
 .es-card {
-  background-color: rgba(20, 21, 25, 0.96); color: #ffffff;
-  border: 1px solid rgba(255,255,255,0.08); border-radius: 12px;
+  background-color: #18181B; color: #ffffff;
+  border: 1px solid rgba(255,255,255,0.08); border-radius: 8px;
   padding: 14px 14px 10px;
 }
 .es-title { font-weight: bold; }
 .es-dim { color: rgba(255,255,255,0.55); font-size: 9pt; }
 .es-section { font-weight: bold; font-size: 9pt; color: rgba(255,255,255,0.6); margin-top: 6px; }
-.es-row { padding: 7px 10px; border-radius: 8px; }
+.es-row { padding: 7px 10px; border-radius: 4px; }
 .es-row:hover { background-color: rgba(255,255,255,0.06); }
-.es-row.active { background-color: rgba(75,144,237,0.18); }
+.es-row.active { background-color: #52525B; }
 .es-row.active .es-name { font-weight: bold; }
-.es-iconbtn { padding: 4px; min-width: 0; min-height: 0; border-radius: 8px; }
-.es-link { padding: 6px 10px; border-radius: 8px; }
-.es-media { background-color: rgba(255,255,255,0.05); border-radius: 10px; padding: 10px; }
+.es-iconbtn { padding: 4px; min-width: 0; min-height: 0; border-radius: 4px; }
+.es-link { padding: 6px 10px; border-radius: 4px; }
+.es-media { background-color: rgba(255,255,255,0.05); border-radius: 6px; padding: 10px; }
 .es-player { font-size: 8.5pt; color: rgba(255,255,255,0.5); }
-.es-ctrl { padding: 4px 8px; min-width: 0; min-height: 0; border-radius: 8px; }
-.es-launch { padding: 4px 10px; border-radius: 8px; }
+.es-ctrl { padding: 4px 8px; min-width: 0; min-height: 0; border-radius: 4px; }
+.es-launch { padding: 4px 10px; border-radius: 4px; }
 """
 
 
